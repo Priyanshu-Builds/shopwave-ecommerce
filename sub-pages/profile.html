@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - ShopWave</title>
+  <link rel="shortcut icon" href="../assets/icon.png" type="image/.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsiveHome.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <section id="header">
+    <a href="../index.html"><img src="../assets/logo.png" alt="logo" class="logo"></a>
+    <div>
+      <ul id="navbar">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+        <a href="#" id="close"><i class="fa-solid fa-xmark"></i></a>
+      </ul>
+    </div>
+    <div id="mobile">
+      <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a>
+      <i id="bar" class="fa-solid fa-bars"></i>
+    </div>
+  </section>
+
+  <section id="page-header" class="about-header">
+    <h2>#my_profile</h2>
+    <p>Manage your account settings</p>
+  </section>
+
+  <section class="section-p1">
+    <div class="profile-container">
+      <div class="profile-sidebar">
+        <ul>
+          <li><a href="#" class="active" onclick="showSection('profile'); return false;">Profile</a></li>
+          <li><a href="orders.html">My Orders</a></li>
+          <li><a href="cart.html">My Cart</a></li>
+          <li><a href="#" onclick="Auth.logout(); return false;">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="profile-content">
+        <div id="profile-section">
+          <div class="profile-header">
+            <div class="profile-avatar" id="user-avatar">U</div>
+            <div>
+              <h2 id="user-name">Loading...</h2>
+              <p id="user-email">Loading...</p>
+            </div>
+          </div>
+
+          <h3>Update Profile</h3>
+          <form id="profile-form" onsubmit="handleUpdateProfile(event)">
+            <div class="form-group">
+              <label for="profile-name">Name</label>
+              <input type="text" id="profile-name" required>
+            </div>
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" required>
+            </div>
+            <div id="profile-message" class="success-message"></div>
+            <div id="profile-error" class="error-message"></div>
+            <button type="submit" class="normal">Update Profile</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section-p1">
+    <div class="col">
+      <img src="../assets/logo.png" alt="logo" class="logoS">
+      <h4>Contact</h4>
+      <p><strong>Address:</strong>Volkswagen digital solutions pvt ltd, Hinjewadi, Pune, Maharashtra, India</p>
+      <p><strong>Phone:</strong>+91 1234567890</p>
+      <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+    </div>
+    <div class="copyright">
+      <p>2026, Volkswagen - ShopWave</p>
+    </div>
+  </footer>
+
+  <script src="../js/responsiveHome.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    // Check login
+    if (!Auth.isLoggedIn()) {
+      window.location.href = 'login.html';
+    }
+
+    // Load profile data
+    async function loadProfile() {
+      try {
+        const response = await Auth.getProfile();
+        if (response.success) {
+          const user = response.data;
+          document.getElementById('user-name').textContent = user.name;
+          document.getElementById('user-email').textContent = user.email;
+          document.getElementById('profile-name').value = user.name;
+          document.getElementById('profile-email').value = user.email;
+          document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    }
+
+    // Handle profile update
+    async function handleUpdateProfile(e) {
+      e.preventDefault();
+      const messageDiv = document.getElementById('profile-message');
+      const errorDiv = document.getElementById('profile-error');
+      messageDiv.textContent = '';
+      errorDiv.textContent = '';
+
+      const name = document.getElementById('profile-name').value;
+      const email = document.getElementById('profile-email').value;
+
+      try {
+        const response = await Auth.updateProfile({ name, email });
+        if (response.success) {
+          messageDiv.textContent = 'Profile updated successfully!';
+          document.getElementById('user-name').textContent = name;
+          document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+        } else {
+          errorDiv.textContent = response.message || 'Failed to update profile';
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message || 'Failed to update profile';
+      }
+    }
+
+    // Load profile on page load
+    loadProfile();
+  </script>
+</body>
+</html>

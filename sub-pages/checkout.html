@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - ShopWave</title>
+  <link rel="shortcut icon" href="../assets/icon.png" type="image/.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsiveHome.css">
+  <link rel="stylesheet" href="../css/auth.css">
+  <style>
+    /* Payment Styles */
+    .payment-methods {
+      margin-top: 30px;
+    }
+    .payment-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .payment-tab {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #cce7d0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .payment-tab.active {
+      border-color: #088178;
+      background: #e8f5f3;
+    }
+    .payment-tab i {
+      font-size: 24px;
+      display: block;
+      margin-bottom: 8px;
+      color: #088178;
+    }
+    .payment-content {
+      display: none;
+    }
+    .payment-content.active {
+      display: block;
+    }
+    .card-icons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .card-icons img {
+      height: 30px;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .card-icons img:hover, .card-icons img.active {
+      opacity: 1;
+    }
+    .card-input-group {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 15px;
+    }
+    .upi-options {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .upi-option {
+      padding: 10px 20px;
+      border: 2px solid #cce7d0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .upi-option.active {
+      border-color: #088178;
+      background: #e8f5f3;
+    }
+    .upi-option img {
+      height: 25px;
+    }
+    /* Payment Modal */
+    .payment-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .payment-modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    .payment-modal h2 {
+      margin-bottom: 20px;
+    }
+    .payment-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e3e6f3;
+      border-top: 4px solid #088178;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .payment-success {
+      color: #28a745;
+      font-size: 60px;
+    }
+    .payment-failed {
+      color: #dc3545;
+      font-size: 60px;
+    }
+    .payment-modal .btn {
+      margin-top: 20px;
+      padding: 12px 30px;
+    }
+  </style>
+</head>
+<body>
+  <section id="header">
+    <a href="../index.html"><img src="../assets/logo.png" alt="logo" class="logo"></a>
+    <div>
+      <ul id="navbar">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+        <a href="#" id="close"><i class="fa-solid fa-xmark"></i></a>
+      </ul>
+    </div>
+    <div id="mobile">
+      <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a>
+      <i id="bar" class="fa-solid fa-bars"></i>
+    </div>
+  </section>
+
+  <section id="page-header" class="about-header">
+    <h2>#checkout</h2>
+    <p>Complete your order securely</p>
+  </section>
+
+  <section class="section-p1">
+    <div class="checkout-container">
+      <div class="checkout-form">
+        <!-- Step 1: Shipping Address -->
+        <div id="step-shipping">
+          <h2>1. Shipping Address</h2>
+          <form id="shipping-form">
+            <div class="form-group">
+              <label for="address">Street Address</label>
+              <input type="text" id="address" placeholder="Enter your street address" required>
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" placeholder="Enter your city" required>
+            </div>
+            <div class="form-group">
+              <label for="postalCode">Postal Code</label>
+              <input type="text" id="postalCode" placeholder="Enter postal code" required>
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input type="text" id="country" placeholder="Enter country" required>
+            </div>
+            <button type="submit" class="normal auth-btn">Continue to Payment</button>
+          </form>
+        </div>
+
+        <!-- Step 2: Payment -->
+        <div id="step-payment" style="display: none;">
+          <h2>2. Payment Method</h2>
+          
+          <div class="payment-tabs">
+            <div class="payment-tab active" data-method="card">
+              <i class="fa-solid fa-credit-card"></i>
+              <span>Credit/Debit Card</span>
+            </div>
+            <div class="payment-tab" data-method="upi">
+              <i class="fa-solid fa-mobile-screen"></i>
+              <span>UPI</span>
+            </div>
+          </div>
+
+          <!-- Card Payment -->
+          <div id="payment-card" class="payment-content active">
+            <div class="card-icons">
+              <img src="../assets/pay/visa.png" alt="Visa" onerror="this.style.display='none'">
+              <img src="../assets/pay/mastercard.png" alt="Mastercard" onerror="this.style.display='none'">
+              <img src="../assets/pay/amex.png" alt="Amex" onerror="this.style.display='none'">
+            </div>
+            <p style="color: #666; margin-bottom: 15px;">Accepted cards (Visa, Mastercard, Amex)</p>
+            
+            <div class="form-group">
+              <label for="cardName">Name on Card</label>
+              <input type="text" id="cardName" placeholder="Enter name as on card" required>
+            </div>
+            <div class="form-group">
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+            <div class="card-input-group">
+              <div class="form-group">
+                <label for="cardExpiry">Expiry Date</label>
+                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" required>
+              </div>
+              <div class="form-group">
+                <label for="cardCVV">CVV</label>
+                <input type="password" id="cardCVV" placeholder="123" maxlength="4" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- UPI Payment -->
+          <div id="payment-upi" class="payment-content">
+            <p style="margin-bottom: 15px;">Select your UPI app:</p>
+            <div class="upi-options">
+              <div class="upi-option active" data-upi="gpay">
+                <i class="fa-brands fa-google-pay" style="font-size: 24px; color: #4285F4;"></i>
+                <span>Google Pay</span>
+              </div>
+              <div class="upi-option" data-upi="phonepe">
+                <i class="fa-solid fa-mobile-screen" style="font-size: 24px; color: #5F259F;"></i>
+                <span>PhonePe</span>
+              </div>
+              <div class="upi-option" data-upi="paytm">
+                <i class="fa-solid fa-wallet" style="font-size: 24px; color: #00BAF2;"></i>
+                <span>Paytm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="upiId">UPI ID</label>
+              <input type="text" id="upiId" placeholder="yourname@upi" required>
+            </div>
+          </div>
+
+          <div id="checkout-error" class="error-message"></div>
+          
+          <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="button" class="normal" style="background: #ccc;" onclick="showStep('shipping')">Back</button>
+            <button type="button" class="normal auth-btn" onclick="processPayment()">Pay Now - $<span id="pay-amount">0.00</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        <div id="checkout-items"></div>
+        <div class="summary-total">
+          <div class="summary-item">
+            <span>Subtotal</span>
+            <span id="checkout-subtotal">$0.00</span>
+          </div>
+          <div class="summary-item">
+            <span>Shipping</span>
+            <span>Free</span>
+          </div>
+          <div class="summary-item summary-total">
+            <span>Total</span>
+            <span id="checkout-total">$0.00</span>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <p style="color: #666; font-size: 12px;">Secured Payment Gateways</p>
+          <img src="../assets/pay/pay.png" alt="payment methods" style="max-width: 100%; margin-top: 10px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section-p1">
+    <div class="col">
+      <img src="../assets/logo.png" alt="logo" class="logoS">
+      <h4>Contact</h4>
+      <p><strong>Address:</strong>Volkswagen digital solutions pvt ltd, Hinjewadi, Pune, Maharashtra, India</p>
+      <p><strong>Phone:</strong>(+91) 01 2345 6789</p>
+      <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+    </div>
+    <div class="copyright">
+      <p>2026 , Priyanshu - ShopWave</p>
+    </div>
+  </footer>
+
+  <script src="../js/responsiveHome.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/orders.js"></script>
+  <script>
+    // Check login
+    if (!Auth.isLoggedIn()) {
+      window.location.href = 'login.html';
+    }
+
+    let orderTotal = 0;
+    let shippingAddress = {};
+    let selectedPaymentMethod = 'card';
+    let selectedUPI = 'gpay';
+
+    // Payment tab switching
+    document.querySelectorAll('.payment-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.payment-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        selectedPaymentMethod = tab.dataset.method;
+        document.getElementById('payment-' + selectedPaymentMethod).classList.add('active');
+      });
+    });
+
+    // UPI option switching
+    document.querySelectorAll('.upi-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.upi-option').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        selectedUPI = opt.dataset.upi;
+      });
+    });
+
+    // Card number formatting
+    document.getElementById('cardNumber').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+      let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+      e.target.value = formatted;
+    });
+
+    // Expiry date formatting
+    document.getElementById('cardExpiry').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2);
+      }
+      e.target.value = value;
+    });
+
+    // Load cart summary
+    async function loadCheckoutSummary() {
+      try {
+        const response = await Cart.getCart();
+        if (response.success && response.data.items) {
+          const items = response.data.items;
+          let html = '';
+          orderTotal = 0;
+
+          items.forEach(item => {
+            if (item.product) {
+              const itemTotal = item.product.price * item.quantity;
+              orderTotal += itemTotal;
+              html += `
+                <div class="summary-item">
+                  <span>${item.product.name} × ${item.quantity}</span>
+                  <span>$${itemTotal.toFixed(2)}</span>
+                </div>
+              `;
+            }
+          });
+
+          document.getElementById('checkout-items').innerHTML = html;
+          document.getElementById('checkout-subtotal').textContent = '$' + orderTotal.toFixed(2);
+          document.getElementById('checkout-total').textContent = '$' + orderTotal.toFixed(2);
+          document.getElementById('pay-amount').textContent = orderTotal.toFixed(2);
+
+          if (items.length === 0) {
+            alert('Your cart is empty');
+            window.location.href = 'cart.html';
+          }
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      }
+    }
+
+    // Show step
+    function showStep(step) {
+      document.getElementById('step-shipping').style.display = step === 'shipping' ? 'block' : 'none';
+      document.getElementById('step-payment').style.display = step === 'payment' ? 'block' : 'none';
+    }
+
+    // Shipping form submit
+    document.getElementById('shipping-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      shippingAddress = {
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        postalCode: document.getElementById('postalCode').value,
+        country: document.getElementById('country').value
+      };
+      showStep('payment');
+    });
+
+    // Process payment
+    async function processPayment() {
+      const errorDiv = document.getElementById('checkout-error');
+      errorDiv.textContent = '';
+
+      // Validate payment details
+      if (selectedPaymentMethod === 'card') {
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const cardExpiry = document.getElementById('cardExpiry').value;
+        const cardCVV = document.getElementById('cardCVV').value;
+        const cardName = document.getElementById('cardName').value;
+
+        if (!cardName || cardNumber.length < 13 || !cardExpiry || cardCVV.length < 3) {
+          errorDiv.textContent = 'Please fill in all card details correctly';
+          return;
+        }
+      } else {
+        const upiId = document.getElementById('upiId').value;
+        if (!upiId || !upiId.includes('@')) {
+          errorDiv.textContent = 'Please enter a valid UPI ID';
+          return;
+        }
+      }
+
+      // Show processing modal
+      showPaymentModal('processing');
+
+      try {
+        // Simulate payment processing (2-3 seconds)
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        // Simulate success/failure (90% success rate)
+        const paymentSuccess = Math.random() > 0.1;
+
+        if (paymentSuccess) {
+          // Create order with paid status
+          const response = await API.post('/orders', { 
+            shippingAddress,
+            paymentStatus: 'paid',
+            paymentMethod: selectedPaymentMethod === 'card' ? 'card' : selectedUPI
+          });
+
+          if (response.success) {
+            showPaymentModal('success', response.data._id);
+          } else {
+            showPaymentModal('failed', null, response.message);
+          }
+        } else {
+          showPaymentModal('failed', null, 'Payment declined. Please try again or use a different payment method.');
+        }
+      } catch (error) {
+        showPaymentModal('failed', null, error.message || 'Payment processing failed');
+      }
+    }
+
+    // Show payment modal
+    function showPaymentModal(status, orderId = null, errorMessage = null) {
+      const existingModal = document.querySelector('.payment-modal');
+      if (existingModal) existingModal.remove();
+
+      let content = '';
+      
+      if (status === 'processing') {
+        content = `
+          <h2>Processing Payment</h2>
+          <div class="payment-spinner"></div>
+          <p>Please wait while we process your payment...</p>
+          <p style="color: #666; font-size: 12px;">Do not close this window</p>
+        `;
+      } else if (status === 'success') {
+        content = `
+          <i class="fa-solid fa-circle-check payment-success"></i>
+          <h2>Payment Successful!</h2>
+          <p>Thank you for your order</p>
+          <p style="font-weight: bold; color: #088178;">Order ID: #${orderId ? orderId.slice(-8).toUpperCase() : 'N/A'}</p>
+          <p style="color: #666;">You will receive an email confirmation shortly.</p>
+          <button class="normal btn" onclick="window.location.href='orders.html'">View My Orders</button>
+        `;
+      } else if (status === 'failed') {
+        content = `
+          <i class="fa-solid fa-circle-xmark payment-failed"></i>
+          <h2>Payment Failed</h2>
+          <p style="color: #dc3545;">${errorMessage || 'Transaction could not be completed'}</p>
+          <button class="normal btn" onclick="closePaymentModal()">Try Again</button>
+          <button class="normal btn" style="background: #ccc; margin-left: 10px;" onclick="window.location.href='cart.html'">Cancel</button>
+        `;
+      }
+
+      const modal = document.createElement('div');
+      modal.className = 'payment-modal';
+      modal.innerHTML = `<div class="payment-modal-content">${content}</div>`;
+      document.body.appendChild(modal);
+    }
+
+    function closePaymentModal() {
+      const modal = document.querySelector('.payment-modal');
+      if (modal) modal.remove();
+    }
+
+    // Load summary on page load
+    loadCheckoutSummary();
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ShopWave</title>
+  <link rel="shortcut icon" href="../assets/icon.png" type="image/.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsiveHome.css">
+  <link rel="stylesheet" href="../css/cart.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <section id="header">
+    <a href="../index.html"><img src="../assets/logo.png" alt="logo" class="logo"></a>
+    <div>
+      <ul id="navbar">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+        <a href="#" id="close"><i class="fa-solid fa-xmark"></i></a>
+      </ul>
+    </div>
+    <div id="mobile">
+      <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a>
+      <i id="bar" class="fa-solid fa-bars"></i>
+    </div>
+  </section>
+
+  <section id="page-header" class="about-header">
+    <h2>#admin_dashboard</h2>
+    <p>Manage your store</p>
+  </section>
+
+  <section class="section-p1">
+    <div class="admin-container">
+      <div class="admin-sidebar">
+        <ul>
+          <li><a href="#" class="active" onclick="showAdminSection('dashboard')">Dashboard</a></li>
+          <li><a href="#" onclick="showAdminSection('products')">Products</a></li>
+          <li><a href="#" onclick="showAdminSection('orders')">Orders</a></li>
+          <li><a href="#" onclick="showAdminSection('users')">Users</a></li>
+          <li><a href="#" onclick="Auth.logout(); return false;">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="admin-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="admin-section active">
+          <h2>Dashboard Overview</h2>
+          <div id="admin-stats" class="stats-grid">
+            <div class="stat-card">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <div class="stat-info">
+                <h3>Loading...</h3>
+              </div>
+            </div>
+          </div>
+          <div id="recent-orders" style="margin-top: 30px;">
+            <p>Loading recent orders...</p>
+          </div>
+        </div>
+
+        <!-- Products Section -->
+        <div id="products-section" class="admin-section">
+          <h2>Product Management</h2>
+          <div id="admin-products">
+            <p>Loading products...</p>
+          </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders-section" class="admin-section">
+          <h2>Order Management</h2>
+          <div id="admin-orders">
+            <p>Loading orders...</p>
+          </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users-section" class="admin-section">
+          <h2>User Management</h2>
+          <div id="admin-users">
+            <p>Loading users...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section-p1">
+    <div class="col">
+      <img src="../assets/logo.png" alt="logo" class="logoS">
+      <h4>Contact</h4>
+      <p><strong>Address:</strong>Volkswagen digital solutions pvt ltd, Hinjewadi, Pune, Maharashtra, India</p>
+      <p><strong>Phone:</strong>(+91) 01 2345 6789</p>
+    </div>
+    <div class="copyright">
+      <p>2026 , Priyanshu - ShopWave</p>
+    </div>
+  </footer>
+
+  <script src="../js/responsiveHome.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/orders.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // Check admin access
+    if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
+      alert('Access denied. Admin privileges required.');
+      window.location.href = 'login.html';
+    }
+
+    // Show admin section
+    function showAdminSection(section) {
+      // Hide all sections
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      // Show selected section
+      document.getElementById(section + '-section').classList.add('active');
+      // Update sidebar
+      document.querySelectorAll('.admin-sidebar a').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Load section data
+      switch(section) {
+        case 'dashboard':
+          Admin.loadDashboard();
+          break;
+        case 'products':
+          Admin.loadProducts();
+          break;
+        case 'orders':
+          Admin.loadAllOrders();
+          break;
+        case 'users':
+          Admin.loadUsers();
+          break;
+      }
+    }
+
+    // Load dashboard on page load
+    Admin.loadDashboard();
+  </script>
+</body>
+</html>

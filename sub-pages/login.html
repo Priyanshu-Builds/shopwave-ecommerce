@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - ShopWave</title>
+  <link rel="shortcut icon" href="../assets/icon.png" type="image/.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsiveHome.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <section id="header">
+    <a href="../index.html"><img src="../assets/logo.png" alt="logo" class="logo"></a>
+    <div>
+      <ul id="navbar">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="lg-bag"><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+        <a href="#" id="close"><i class="fa-solid fa-xmark"></i></a>
+      </ul>
+    </div>
+    <div id="mobile">
+      <a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a>
+      <i id="bar" class="fa-solid fa-bars"></i>
+    </div>
+  </section>
+
+  <section id="page-header" class="about-header">
+    <h2>#account</h2>
+    <p>Login or create a new account</p>
+  </section>
+
+  <section id="auth-section" class="section-p1">
+    <div class="auth-container">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="auth-form active">
+        <h2>Welcome Back</h2>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required>
+          </div>
+          <div id="login-error" class="error-message"></div>
+          <button type="submit" class="normal auth-btn">Login</button>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-form" class="auth-form">
+        <h2>Create Account</h2>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="register-name">Full Name</label>
+            <input type="text" id="register-name" placeholder="Enter your name" required>
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" placeholder="Create a password (min 6 characters)" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="register-confirm">Confirm Password</label>
+            <input type="password" id="register-confirm" placeholder="Confirm your password" required>
+          </div>
+          <div id="register-error" class="error-message"></div>
+          <button type="submit" class="normal auth-btn">Register</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section-p1">
+    <div class="col">
+      <img src="../assets/logo.png" alt="logo" class="logoS">
+      <h4>Contact</h4>
+      <p><strong>Address:</strong>Volkswagen digital solutions pvt ltd, Hinjewadi, Pune, Maharashtra, India</p>
+      <p><strong>Phone:</strong>+91 1234567890</p>
+      <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+      <div class="follow">
+        <h4>Follow us</h4>
+        <div class="icon">
+          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-linkedin"></i>
+          <i class="fa-brands fa-twitter"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <h4>About</h4>
+      <a href="#">About Us</a>
+      <a href="#">Delivery Information</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & Condition</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <div class="col">
+      <h4>My Account</h4>
+      <a href="login.html">Sign In</a>
+      <a href="cart.html">View Cart</a>
+      <a href="orders.html">My Orders</a>
+      <a href="#">Help</a>
+    </div>
+    <div class="col install">
+      <h4>Install App</h4>
+      <p>From App Store or Google Play</p>
+      <div class="row">
+        <img src="../assets/pay/app.jpg" alt="app">
+        <img src="../assets/pay/play.jpg" alt="play">
+      </div>
+      <p>Secured Payment Gateways</p>
+      <img src="../assets/pay/pay.png" alt="pay">
+    </div>
+    <div class="copyright">
+      <p>2026, Volkswagen - ShopWave</p>
+    </div>
+  </footer>
+
+  <script src="../js/responsiveHome.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-form').classList.add('active');
+      });
+    });
+
+    // Handle login
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      
+      errorDiv.textContent = '';
+      
+      const result = await Auth.login(email, password);
+      if (result.success) {
+        window.location.href = '../index.html';
+      } else {
+        errorDiv.textContent = result.message || 'Login failed';
+      }
+    }
+
+    // Handle register
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const confirm = document.getElementById('register-confirm').value;
+      const errorDiv = document.getElementById('register-error');
+      
+      errorDiv.textContent = '';
+      
+      if (password !== confirm) {
+        errorDiv.textContent = 'Passwords do not match';
+        return;
+      }
+      
+      const result = await Auth.register(name, email, password);
+      if (result.success) {
+        window.location.href = '../index.html';
+      } else {
+        errorDiv.textContent = result.message || 'Registration failed';
+      }
+    }
+
+    // Redirect if already logged in
+    if (Auth.isLoggedIn()) {
+      window.location.href = 'profile.html';
+    }
+  </script>
+</body>
+</html>
