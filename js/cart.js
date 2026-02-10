@@ -251,15 +251,49 @@ const Cart = {
             return;
         }
 
+        // Show loading spinner
+        const tbody = document.querySelector('#cart table tbody');
+        if (tbody) {
+            tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px;">
+              <div style="display:inline-block;width:36px;height:36px;border:4px solid #e3e6f3;border-top:4px solid #088178;border-radius:50%;animation:spin 1s linear infinite;"></div>
+              <p id="cart-loading-msg" style="margin-top:12px;color:#666;">Loading your cart...</p>
+              <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+            </td>
+          </tr>
+        `;
+        }
+
+        // Show slow-loading message after 5 seconds
+        const slowTimer = setTimeout(() => {
+            const msg = document.getElementById('cart-loading-msg');
+            if (msg) {
+                msg.innerHTML = 'Server is waking up, please wait...<br><small style="color:#999;">Free hosting takes ~30s on first load</small>';
+            }
+        }, 5000);
+
         try {
             const response = await this.getCart();
+            clearTimeout(slowTimer);
             if (response.success) {
                 this.renderCart(response.data);
                 const totalItems = response.data.items.reduce((sum, item) => sum + item.quantity, 0);
                 this.updateCartBadge(totalItems);
             }
         } catch (error) {
+            clearTimeout(slowTimer);
             console.error('Error loading cart:', error);
+            if (tbody) {
+                tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px;">
+              <p style="color:#dc3545;">Failed to load cart. Server may be starting up.</p>
+              <button onclick="Cart.loadCart()" class="normal" style="margin-top:10px;">Try Again</button>
+            </td>
+          </tr>
+        `;
+            }
         }
     },
 
