@@ -172,16 +172,40 @@ const Orders = {
 
         const container = document.getElementById('orders-list');
         if (container) {
-            container.innerHTML = '<p>Loading orders...</p>';
+            container.innerHTML = `
+              <div style="text-align: center; padding: 40px;">
+                <div style="display:inline-block;width:36px;height:36px;border:4px solid #e3e6f3;border-top:4px solid #088178;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                <p id="orders-loading-msg" style="margin-top:12px;color:#666;">Loading your orders...</p>
+                <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+              </div>
+            `;
         }
+
+        // Show slow-loading message after 5 seconds
+        const slowTimer = setTimeout(() => {
+            const msg = document.getElementById('orders-loading-msg');
+            if (msg) {
+                msg.innerHTML = 'Server is waking up, please wait...<br><small style="color:#999;">Free hosting takes ~30s on first load</small>';
+            }
+        }, 5000);
 
         try {
             const response = await this.getMyOrders();
+            clearTimeout(slowTimer);
             if (response.success) {
                 this.renderOrders(response.data);
             }
         } catch (error) {
+            clearTimeout(slowTimer);
             console.error('Error loading orders:', error);
+            if (container) {
+                container.innerHTML = `
+                  <div style="text-align: center; padding: 40px;">
+                    <p style="color:#dc3545;">Failed to load orders. Server may be starting up.</p>
+                    <button onclick="Orders.loadOrders()" class="normal" style="margin-top:10px;">Try Again</button>
+                  </div>
+                `;
+            }
         }
     }
 };

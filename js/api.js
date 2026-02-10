@@ -19,8 +19,8 @@ const API = {
         return headers;
     },
 
-    // Generic fetch wrapper
-    async request(endpoint, options = {}) {
+    // Generic fetch wrapper with retry for cold starts
+    async request(endpoint, options = {}, retries = 2) {
         const url = `${CONFIG.API_BASE_URL}${endpoint}`;
         const config = {
             headers: this.getHeaders(options.auth !== false),
@@ -32,18 +32,32 @@ const API = {
             config.body = JSON.stringify(options.body);
         }
 
-        try {
-            const response = await fetch(url, config);
-            const data = await response.json();
+        for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+                // Add 45s timeout for Render cold starts
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 45000);
+                config.signal = controller.signal;
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Request failed');
+                const response = await fetch(url, config);
+                clearTimeout(timeoutId);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Request failed');
+                }
+
+                return data;
+            } catch (error) {
+                clearTimeout && clearTimeout;
+                if (attempt < retries && (error.name === 'AbortError' || error.message === 'Failed to fetch')) {
+                    console.log(`API retry ${attempt + 1}/${retries} for ${endpoint}...`);
+                    await new Promise(r => setTimeout(r, 2000));
+                    continue;
+                }
+                console.error('API Error:', error);
+                throw error;
             }
-
-            return data;
-        } catch (error) {
-            console.error('API Error:', error);
-            throw error;
         }
     },
 
