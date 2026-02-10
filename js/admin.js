@@ -947,7 +947,7 @@ const Admin = {
 
 // Initialize admin on page load
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname.includes('admin.html')) {
+  if (window.location.pathname.includes('admin.html') || window.location.pathname.endsWith('/admin')) {
     Admin.loadDashboard();
   }
 });

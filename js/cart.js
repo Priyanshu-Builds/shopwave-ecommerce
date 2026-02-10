@@ -340,7 +340,7 @@ const Cart = {
 
 // Initialize cart on cart page
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.includes('cart.html')) {
+    if (window.location.pathname.includes('cart.html') || window.location.pathname.endsWith('/cart')) {
         Cart.loadCart();
     }
     // Load cart count on all pages if logged in

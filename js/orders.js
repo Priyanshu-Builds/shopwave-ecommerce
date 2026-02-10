@@ -1,76 +1,76 @@
 // ShopWave Orders Module
 const Orders = {
-    // Create order from cart
-    async createOrder(shippingAddress) {
-        try {
-            const response = await API.post('/orders', { shippingAddress });
-            return response;
-        } catch (error) {
-            return { success: false, message: error.message };
-        }
-    },
+  // Create order from cart
+  async createOrder(shippingAddress) {
+    try {
+      const response = await API.post('/orders', { shippingAddress });
+      return response;
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  },
 
-    // Get user's orders
-    async getMyOrders() {
-        try {
-            const response = await API.get('/orders/myorders');
-            return response;
-        } catch (error) {
-            return { success: false, message: error.message };
-        }
-    },
+  // Get user's orders
+  async getMyOrders() {
+    try {
+      const response = await API.get('/orders/myorders');
+      return response;
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  },
 
-    // Get single order
-    async getOrder(orderId) {
-        try {
-            const response = await API.get(`/orders/${orderId}`);
-            return response;
-        } catch (error) {
-            return { success: false, message: error.message };
-        }
-    },
+  // Get single order
+  async getOrder(orderId) {
+    try {
+      const response = await API.get(`/orders/${orderId}`);
+      return response;
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  },
 
-    // Format date
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    },
+  // Format date
+  formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  },
 
-    // Get status badge class
-    getStatusBadge(status) {
-        const colors = {
-            'processing': '#f0ad4e',
-            'shipped': '#5bc0de',
-            'delivered': '#5cb85c',
-            'cancelled': '#d9534f',
-            'pending': '#f0ad4e',
-            'paid': '#5cb85c',
-            'failed': '#d9534f'
-        };
-        return `background-color: ${colors[status] || '#888'}; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;`;
-    },
+  // Get status badge class
+  getStatusBadge(status) {
+    const colors = {
+      'processing': '#f0ad4e',
+      'shipped': '#5bc0de',
+      'delivered': '#5cb85c',
+      'cancelled': '#d9534f',
+      'pending': '#f0ad4e',
+      'paid': '#5cb85c',
+      'failed': '#d9534f'
+    };
+    return `background-color: ${colors[status] || '#888'}; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;`;
+  },
 
-    // Render orders list
-    renderOrders(orders, containerId = 'orders-list') {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+  // Render orders list
+  renderOrders(orders, containerId = 'orders-list') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        if (!orders || orders.length === 0) {
-            container.innerHTML = `
+    if (!orders || orders.length === 0) {
+      container.innerHTML = `
         <div style="text-align: center; padding: 40px;">
           <h3>No orders yet</h3>
           <p>Start shopping and your orders will appear here.</p>
           <a href="shop.html" class="normal" style="display: inline-block; margin-top: 20px;">Browse Products</a>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        let html = `
+    let html = `
       <table width="100%">
         <thead>
           <tr>
@@ -85,8 +85,8 @@ const Orders = {
         <tbody>
     `;
 
-        orders.forEach(order => {
-            html += `
+    orders.forEach(order => {
+      html += `
         <tr onclick="Orders.showOrderDetails('${order._id}')" style="cursor: pointer;">
           <td>#${order._id.slice(-8).toUpperCase()}</td>
           <td>${this.formatDate(order.createdAt)}</td>
@@ -96,29 +96,29 @@ const Orders = {
           <td><span style="${this.getStatusBadge(order.orderStatus)}">${order.orderStatus}</span></td>
         </tr>
       `;
-        });
+    });
 
-        html += '</tbody></table>';
-        container.innerHTML = html;
-    },
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  },
 
-    // Show order details modal
-    async showOrderDetails(orderId) {
-        try {
-            const response = await this.getOrder(orderId);
-            if (!response.success) {
-                alert('Failed to load order details');
-                return;
-            }
+  // Show order details modal
+  async showOrderDetails(orderId) {
+    try {
+      const response = await this.getOrder(orderId);
+      if (!response.success) {
+        alert('Failed to load order details');
+        return;
+      }
 
-            const order = response.data;
-            const basePath = window.location.pathname.includes('sub-pages') ? '..' : '.';
+      const order = response.data;
+      const basePath = window.location.pathname.includes('sub-pages') ? '..' : '.';
 
-            let itemsHtml = '';
-            order.items.forEach(item => {
-                const imagePath = item.image || '/assets/products/f1.jpg';
-                const fullImagePath = imagePath.startsWith('/') ? basePath + imagePath : imagePath;
-                itemsHtml += `
+      let itemsHtml = '';
+      order.items.forEach(item => {
+        const imagePath = item.image || '/assets/products/f1.jpg';
+        const fullImagePath = imagePath.startsWith('/') ? basePath + imagePath : imagePath;
+        itemsHtml += `
           <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee;">
             <img src="${fullImagePath}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; margin-right: 15px;">
             <div style="flex: 1;">
@@ -128,9 +128,9 @@ const Orders = {
             <strong>$${(item.price * item.quantity).toFixed(2)}</strong>
           </div>
         `;
-            });
+      });
 
-            const modalHtml = `
+      const modalHtml = `
         <div id="order-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;">
           <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -157,62 +157,62 @@ const Orders = {
         </div>
       `;
 
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-        } catch (error) {
-            console.error('Error showing order details:', error);
-        }
-    },
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    } catch (error) {
+      console.error('Error showing order details:', error);
+    }
+  },
 
-    // Load orders on orders page
-    async loadOrders() {
-        if (!Auth.isLoggedIn()) {
-            window.location.href = 'login.html';
-            return;
-        }
+  // Load orders on orders page
+  async loadOrders() {
+    if (!Auth.isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
 
-        const container = document.getElementById('orders-list');
-        if (container) {
-            container.innerHTML = `
+    const container = document.getElementById('orders-list');
+    if (container) {
+      container.innerHTML = `
               <div style="text-align: center; padding: 40px;">
                 <div style="display:inline-block;width:36px;height:36px;border:4px solid #e3e6f3;border-top:4px solid #088178;border-radius:50%;animation:spin 1s linear infinite;"></div>
                 <p id="orders-loading-msg" style="margin-top:12px;color:#666;">Loading your orders...</p>
                 <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
               </div>
             `;
-        }
+    }
 
-        // Show slow-loading message after 5 seconds
-        const slowTimer = setTimeout(() => {
-            const msg = document.getElementById('orders-loading-msg');
-            if (msg) {
-                msg.innerHTML = 'Server is waking up, please wait...<br><small style="color:#999;">Free hosting takes ~30s on first load</small>';
-            }
-        }, 5000);
+    // Show slow-loading message after 5 seconds
+    const slowTimer = setTimeout(() => {
+      const msg = document.getElementById('orders-loading-msg');
+      if (msg) {
+        msg.innerHTML = 'Server is waking up, please wait...<br><small style="color:#999;">Free hosting takes ~30s on first load</small>';
+      }
+    }, 5000);
 
-        try {
-            const response = await this.getMyOrders();
-            clearTimeout(slowTimer);
-            if (response.success) {
-                this.renderOrders(response.data);
-            }
-        } catch (error) {
-            clearTimeout(slowTimer);
-            console.error('Error loading orders:', error);
-            if (container) {
-                container.innerHTML = `
+    try {
+      const response = await this.getMyOrders();
+      clearTimeout(slowTimer);
+      if (response.success) {
+        this.renderOrders(response.data);
+      }
+    } catch (error) {
+      clearTimeout(slowTimer);
+      console.error('Error loading orders:', error);
+      if (container) {
+        container.innerHTML = `
                   <div style="text-align: center; padding: 40px;">
                     <p style="color:#dc3545;">Failed to load orders. Server may be starting up.</p>
                     <button onclick="Orders.loadOrders()" class="normal" style="margin-top:10px;">Try Again</button>
                   </div>
                 `;
-            }
-        }
+      }
     }
+  }
 };
 
 // Initialize orders on orders page
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.includes('orders.html')) {
-        Orders.loadOrders();
-    }
+  if (window.location.pathname.includes('orders.html') || window.location.pathname.endsWith('/orders')) {
+    Orders.loadOrders();
+  }
 });
