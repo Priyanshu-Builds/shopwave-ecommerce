@@ -1,6 +1,6 @@
 // ShopWave API Configuration
 const CONFIG = {
-    API_BASE_URL: 'https://shopwave-backend-k6ay.onrender.com/api',
+    API_BASE_URL: '/api',
     TOKEN_KEY: 'shopwave_token',
     USER_KEY: 'shopwave_user'
 };
