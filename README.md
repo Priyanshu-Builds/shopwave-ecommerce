@@ -1,3 +1,4 @@
+[![Deploy with Vercel](https://vercel.com/button)](https://shopwave-ecommerce.vercel.app/)
 # SHOPWAVE – A Scalable Full-Stack E-Commerce Ecosystem
 
 ## Executive Summary
