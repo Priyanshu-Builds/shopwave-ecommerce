@@ -1,7 +1,7 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://shopwave-ecommerce.vercel.app/)
 # SHOPWAVE – A Scalable Full-Stack E-Commerce Ecosystem
 
-## Executive Summary
+## Summary
 
 ShopWave represents a modern, production-ready e-commerce platform developed as a proof-of-concept for scalable digital retail solutions. Built entirely on the **MERN-adjacent stack** (MongoDB, Express.js, Node.js with vanilla JavaScript frontend), this project demonstrates enterprise-grade software engineering principles while maintaining the agility required for rapid feature iteration.
 
