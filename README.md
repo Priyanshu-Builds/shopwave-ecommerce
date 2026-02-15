@@ -3,7 +3,7 @@
 
 ## Summary
 
-ShopWave represents a modern, production-ready e-commerce platform developed as a proof-of-concept for scalable digital retail solutions. Built entirely on the **MERN-adjacent stack** (MongoDB, Express.js, Node.js with vanilla JavaScript frontend), this project demonstrates enterprise-grade software engineering principles while maintaining the agility required for rapid feature iteration.
+ShopWave represents a modern, production ready e-commerce platform developed as a proof-of-concept for scalable digital retail solutions. Built entirely on the **MERN-adjacent stack** (MongoDB, Express.js, Node.js with vanilla JavaScript frontend), this project demonstrates enterprise-grade software engineering principles while maintaining the agility required for rapid feature iteration.
 
 The platform serves as a comprehensive case study in full-stack development, implementing critical e-commerce functionalities including secure user authentication, dynamic product catalog management, stateful shopping cart operations, and a complete order processing pipeline. With over **15,000 lines of production code** across backend services and frontend interfaces, ShopWave exemplifies how modern web technologies can be orchestrated to create performant, maintainable, and secure digital commerce solutions.
 
